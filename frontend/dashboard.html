@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FreeDrive</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="assets/logo.svg" alt="FreeDrive" class="logo-icon">
+                <span class="logo-text">FreeDrive</span>
+            </a>
+            <div class="nav-menu">
+                <span class="nav-welcome">Welcome, <span id="userEmail">user@example.com</span></span>
+                <div class="nav-buttons">
+                    <button class="btn btn-outline" onclick="logout()">Sign Out</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-menu">
+                <a href="#dashboard" class="menu-item active" onclick="showSection('dashboard')">
+                    <span class="menu-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#files" class="menu-item" onclick="showSection('files')">
+                    <span class="menu-icon">📁</span>
+                    <span>My Files</span>
+                </a>
+                <a href="#upload" class="menu-item" onclick="showSection('upload')">
+                    <span class="menu-icon">⬆️</span>
+                    <span>Upload Files</span>
+                </a>
+                <a href="#storage" class="menu-item" onclick="showSection('storage')">
+                    <span class="menu-icon">💾</span>
+                    <span>Storage</span>
+                </a>
+                <a href="#settings" class="menu-item" onclick="showSection('settings')">
+                    <span class="menu-icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboardSection" class="content-section active">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                    <p>Overview of your FreeDrive storage</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📁</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalFiles">0</div>
+                            <div class="stat-label">Total Files</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💾</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalStorage">0 MB</div>
+                            <div class="stat-label">Storage Used</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🗂️</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalRepos">0</div>
+                            <div class="stat-label">Repositories</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="usagePercent">0%</div>
+                            <div class="stat-label">Storage Usage</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Storage Usage Chart -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Storage Usage</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="storage-bar">
+                            <div class="storage-progress" id="storageProgress"></div>
+                        </div>
+                        <div class="storage-details">
+                            <span id="storageUsed">0 MB used</span>
+                            <span id="storageAvailable">50 GB available</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Files -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Recent Files</h3>
+                        <button class="btn btn-outline" onclick="showSection('files')">View All</button>
+                    </div>
+                    <div class="card-content">
+                        <div id="recentFilesList" class="recent-files">
+                            <!-- Recent files will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Files Section -->
+            <section id="filesSection" class="content-section">
+                <div class="page-header">
+                    <h1>My Files</h1>
+                    <div class="page-actions">
+                        <div class="search-bar">
+                            <input type="text" id="fileSearch" placeholder="Search files..." onkeyup="searchFiles()">
+                        </div>
+                        <button class="btn btn-primary" onclick="showSection('upload')">Upload Files</button>
+                    </div>
+                </div>
+
+                <!-- File Filter -->
+                <div class="file-filters">
+                    <button class="filter-btn active" onclick="filterFiles('all')">All Files</button>
+                    <button class="filter-btn" onclick="filterFiles('images')">Images</button>
+                    <button class="filter-btn" onclick="filterFiles('documents')">Documents</button>
+                    <button class="filter-btn" onclick="filterFiles('videos')">Videos</button>
+                    <button class="filter-btn" onclick="filterFiles('other')">Other</button>
+                </div>
+
+                <!-- Files Grid -->
+                <div class="files-container">
+                    <div id="filesList" class="files-grid">
+                        <!-- Files will be loaded here -->
+                    </div>
+                    <div id="filesLoading" class="loading-state" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Loading files...</p>
+                    </div>
+                    <div id="filesEmpty" class="empty-state" style="display: none;">
+                        <div class="empty-icon">📁</div>
+                        <h3>No files yet</h3>
+                        <p>Upload your first file to get started</p>
+                        <button class="btn btn-primary" onclick="showSection('upload')">Upload Files</button>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div id="filesPagination" class="pagination" style="display: none;">
+                    <button class="btn btn-outline" onclick="loadPreviousPage()">Previous</button>
+                    <span id="paginationInfo">Page 1 of 1</span>
+                    <button class="btn btn-outline" onclick="loadNextPage()">Next</button>
+                </div>
+            </section>
+
+            <!-- Upload Section -->
+            <section id="uploadSection" class="content-section">
+                <div class="page-header">
+                    <h1>Upload Files</h1>
+                    <p>Drag and drop files or click to select</p>
+                </div>
+
+                <!-- Upload Area -->
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <div class="upload-icon">📁</div>
+                        <h3>Drop files here or click to upload</h3>
+                        <p>Maximum file size: 2GB per file</p>
+                        <button class="btn btn-primary" onclick="selectFiles()">Select Files</button>
+                        <input type="file" id="fileInput" multiple style="display: none;" onchange="handleFileSelection()">
+                    </div>
+                </div>
+
+                <!-- Upload Progress -->
+                <div id="uploadProgress" class="upload-progress" style="display: none;">
+                    <h3>Uploading Files</h3>
+                    <div id="uploadList" class="upload-list">
+                        <!-- Upload progress items will be added here -->
+                    </div>
+                </div>
+
+                <!-- Upload Tips -->
+                <div class="upload-tips">
+                    <h3>Upload Tips</h3>
+                    <ul>
+                        <li>Maximum file size is 2GB per file</li>
+                        <li>You can upload multiple files at once</li>
+                        <li>Supported formats: Images, Documents, Videos, Archives, and more</li>
+                        <li>Files are automatically organized in your repositories</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Storage Section -->
+            <section id="storageSection" class="content-section">
+                <div class="page-header">
+                    <h1>Storage Management</h1>
+                    <p>Monitor and manage your storage usage</p>
+                </div>
+
+                <!-- Storage Overview -->
+                <div class="storage-overview">
+                    <div class="storage-card">
+                        <h3>Total Storage</h3>
+                        <div class="storage-amount" id="totalStorageAmount">50+ GB</div>
+                        <div class="storage-bar">
+                            <div class="storage-progress" id="storageProgressBar"></div>
+                        </div>
+                        <div class="storage-stats">
+                            <span id="storageUsedText">0 MB used</span>
+                            <span id="storageAvailableText">50 GB available</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Repositories -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Repositories</h3>
+                        <button class="btn btn-outline" onclick="createNewRepository()">New Repository</button>
+                    </div>
+                    <div class="card-content">
+                        <div id="repositoriesList" class="repositories-list">
+                            <!-- Repositories will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Storage Tips -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Storage Tips</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li>Each repository can hold up to 800MB of files</li>
+                            <li>New repositories are created automatically when needed</li>
+                            <li>Delete unused files to free up space</li>
+                            <li>Large files (videos, archives) use more space</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settingsSection" class="content-section">
+                <div class="page-header">
+                    <h1>Settings</h1>
+                    <p>Manage your account preferences</p>
+                </div>
+
+                <!-- Account Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Account Information</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="settingsEmail" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Member Since</label>
+                            <input type="text" id="memberSince" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Verified</label>
+                            <span id="emailVerified" class="status-badge">No</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferences -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Preferences</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="form-group">
+                            <label>Default File View</label>
+                            <select id="defaultFileView">
+                                <option value="grid">Grid View</option>
+                                <option value="list">List View</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Files Per Page</label>
+                            <select id="filesPerPage">
+                                <option value="20">20 files</option>
+                                <option value="50">50 files</option>
+                                <option value="100">100 files</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Theme</label>
+                            <select id="theme">
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="saveSettings()">Save Preferences</button>
+                    </div>
+                </div>
+
+                <!-- Data Export -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Data Management</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="form-group">
+                            <label>Export Your Data</label>
+                            <p>Download a copy of all your files and metadata</p>
+                            <button class="btn btn-outline" onclick="exportData()">Export Data</button>
+                        </div>
+                        <div class="form-group danger-zone">
+                            <label>Delete Account</label>
+                            <p>Permanently delete your account and all data</p>
+                            <button class="btn btn-danger" onclick="confirmAccountDeletion()">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- File Context Menu -->
+    <div id="fileContextMenu" class="context-menu" style="display: none;">
+        <div class="context-item" onclick="downloadFile()">
+            <span class="context-icon">⬇️</span>
+            Download
+        </div>
+        <div class="context-item" onclick="copyFileLink()">
+            <span class="context-icon">🔗</span>
+            Copy Link
+        </div>
+        <div class="context-item danger" onclick="deleteFile()">
+            <span class="context-icon">🗑️</span>
+            Delete
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="confirmTitle">Confirm Action</h3>
+                <button class="modal-close" onclick="closeConfirmModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure you want to perform this action?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeConfirmModal()">Cancel</button>
+                <button class="btn btn-danger" id="confirmButton" onclick="confirmAction()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p id="loadingText">Loading...</p>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/upload.js"></script>
+</body>
+</html>

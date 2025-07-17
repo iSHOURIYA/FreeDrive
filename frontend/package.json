@@ -1,0 +1,34 @@
+{
+  "name": "freedrive-frontend",
+  "version": "1.0.0",
+  "description": "FreeDrive MVP Frontend",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 3001 -c-1",
+    "build": "npm run build:css",
+    "build:css": "echo 'CSS build complete'",
+    "dev": "npx live-server --port=3001 --no-browser",
+    "lint": "npx eslint js/ --ext .js",
+    "format": "npx prettier --write js/ css/ *.html"
+  },
+  "keywords": [
+    "file-storage",
+    "github",
+    "cloud-storage",
+    "frontend"
+  ],
+  "author": "FreeDrive Team",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5"
+  },
+  "dependencies": {},
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
